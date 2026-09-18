@@ -1,0 +1,7 @@
+name: synthpad-q
+description: ""
+ports: []
+bricks:
+- arduino:web_ui: {}
+- arduino:sound_generator: {}
+icon: ▶️
