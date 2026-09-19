@@ -4,327 +4,86 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <title>SynthPad Q</title>
-
   <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 
 <body>
-
-  <main class="synth">
-
-    <section class="control-grid">
-
+  <main class="synth"> <!-- MAIN CONTROLS -->
+    <section class="control-grid"> <!-- BLUE KNOB -->
       <div class="control-card blue-control">
         <div class="control-header">
-
-          <div>
-            <span class="control-indicator blue"></span>
+          <div> <span class="control-indicator blue"></span>
             <h2>Blue Knob</h2>
-          </div>
-
-          <span class="control-tag">CONTROL A</span>
-
+          </div> <span class="control-tag">CONTROL A</span>
         </div>
-
-        <p class="control-description">
-          Select which parameter the blue potentiometer controls.
-        </p>
-
-        <div class="parameter-buttons">
-
-          <button
-            class="parameter-button active"
-            id="bpmbutton">
-            BPM
-          </button>
-
-          <button
-            class="parameter-button"
-            id="octavebutton">
-            OCTAVE
-          </button>
-
-          <button
-            class="parameter-button"
-            id="attackbutton">
-            ATTACK
-          </button>
-
+        <p class="control-description"> Select which parameter the blue potentiometer controls. </p>
+        <div class="parameter-buttons"> <button class="parameter-button active" id="bpmbutton">BPM</button> <button
+            class="parameter-button" id="octavebutton">OCTAVE</button> <button class="parameter-button"
+            id="attackbutton">ATTACK</button> </div>
+        <div class="parameter-value"> <span>BPM value: </span> <strong id="bpmvalue">100</strong> <span>Octave value:
+          </span> <strong id="octavevalue">8</strong> <span>Attack value: </span> <strong id="attackvalue">0.01</strong>
         </div>
-
-        <div class="parameter-value">
-
-          <span>BPM value:</span>
-          <strong id="bpmvalue">100</strong>
-
-          <span>Octave value:</span>
-          <strong id="octavevalue">8</strong>
-
-          <span>Attack value:</span>
-          <strong id="attackvalue">0.01</strong>
-
-        </div>
-
-      </div>
-
+      </div> <!-- RED KNOB -->
       <div class="control-card red-control">
-
         <div class="control-header">
-
-          <div>
-            <span class="control-indicator red"></span>
+          <div> <span class="control-indicator red"></span>
             <h2>Red Knob</h2>
-          </div>
-
-          <span class="control-tag">CONTROL B</span>
-
+          </div> <span class="control-tag">CONTROL B</span>
         </div>
-
-        <p class="control-description">
-          Select which parameter the red potentiometer controls.
-        </p>
-
-        <div class="parameter-buttons">
-
-          <button
-            class="parameter-button active"
-            id="volumebutton">
-            VOLUME
-          </button>
-
-          <button
-            class="parameter-button"
-            id="releasebutton">
-            RELEASE
-          </button>
-
-          <button
-            class="parameter-button"
-            id="glidebutton">
-            GLIDE
-          </button>
-
-        </div>
-
-        <div class="parameter-value">
-
-          <span>Volume value:</span>
-          <strong id="volumevalue">1.00</strong>
-
-          <span>Release value:</span>
-          <strong id="releasevalue">0.03</strong>
-
-          <span>Glide value:</span>
-          <strong id="glidevalue">0.02</strong>
-
-        </div>
-
+        <p class="control-description"> Select which parameter the red potentiometer controls. </p>
+        <div class="parameter-buttons"> <button class="parameter-button active">VOLUME</button> <button
+            class="parameter-button">RELEASE</button> <button class="parameter-button">GLIDE</button> </div>
+        <div class="parameter-value"> <span>Current value</span> <strong id="redPotValue">1.0</strong> </div>
       </div>
-
-    </section>
-
+    </section> <!-- SYNTH SETTINGS -->
     <section class="settings-panel">
-
-      <!-- WAVEFORM -->
-
-      <div class="setting">
-
-        <label for="waveform">
-          Waveform
-        </label>
-
-        <select id="waveform">
-
-          <option value="sine">
-            Sine
-          </option>
-
-          <option value="square">
-            Square
-          </option>
-
-          <option value="triangle">
-            Triangle
-          </option>
-
-          <option value="sawtooth">
-            Sawtooth
-          </option>
-
-        </select>
-
-      </div>
-
-
-      <div class="setting">
-
-        <label for="sound-effect">
-          Sound Effect
-        </label>
-
-        <select id="sound-effect">
-
-          <option value="none">
-            None
-          </option>
-
-          <option value="chorus">
-            Chorus
-          </option>
-
-          <option value="tremolo">
-            Tremolo
-          </option>
-
-          <option value="vibrato">
-            Vibrato
-          </option>
-
-          <option value="overdrive">
-            Overdrive
-          </option>
-
-          <option value="bitcrusher">
-            Bitcrusher
-          </option>
-
-        </select>
-
-      </div>
-
-      <div class="setting">
-
-        <label for="time-signature">
-          Time Signature
-        </label>
-
-        <select id="time-signature">
-
-          <option value="4,4">
-            4 / 4
-          </option>
-
-          <option value="3,4">
-            3 / 4
-          </option>
-
-          <option value="2,4">
-            2 / 4
-          </option>
-
-          <option value="6,8">
-            6 / 8
-          </option>
-
-        </select>
-
-      </div>
-
-    </section>
-
+      <div class="setting"> <label for="waveform">Waveform</label> <select id="waveform">
+          <option value="sine">Sine</option>
+          <option value="square">Square</option>
+          <option value="triangle">Triangle</option>
+          <option value="sawtooth">Sawtooth</option>
+        </select> </div>
+      <div class="setting"> <label for="sound-effect">Sound Effect</label> <select id="sound-effect">
+          <option value="adsr">ADSR</option>
+          <option value="chorus">Chorus</option>
+          <option value="tremolo">Tremolo</option>
+          <option value="vibrato">Vibrato</option>
+          <option value="overdrive">Overdrive</option>
+          <option value="bitcrusher">Bitcrusher</option>
+        </select> </div>
+      <div class="setting"> <label for="time-signature">Time Signature</label> <select id="time-signature">
+          <option value="4,4">4 / 4</option>
+          <option value="3,4">3 / 4</option>
+          <option value="2,4">2 / 4</option>
+          <option value="6,8">6 / 8</option>
+        </select> </div>
+    </section> <!-- PERFORMANCE PAD -->
     <section class="performance-section">
-
       <div class="section-header">
-
         <div>
-          <p class="eyebrow">
-            PERFORMANCE
-          </p>
-
-          <h2>
-            Touch Pads
-          </h2>
-        </div>
-
-        <span class="octave-display">
-          OCTAVE 4
-        </span>
-
+          <p class="eyebrow">PERFORMANCE</p>
+          <h2>Touch Pads</h2>
+        </div> <span class="octave-display">OCTAVE 4</span>
       </div>
-
-      <div class="synth-pads">
-
-        <button class="note-pad white-pad" data-note="C4">
-          <span>C</span>
-          <small>C4</small>
-        </button>
-
-        <button class="note-pad black-pad" data-note="C#4">
-          <span>C#</span>
-          <small>C#4</small>
-        </button>
-
-        <button class="note-pad white-pad" data-note="D4">
-          <span>D</span>
-          <small>D4</small>
-        </button>
-
-        <button class="note-pad black-pad" data-note="D#4">
-          <span>D#</span>
-          <small>D#4</small>
-        </button>
-
-        <button class="note-pad white-pad" data-note="E4">
-          <span>E</span>
-          <small>E4</small>
-        </button>
-
-        <button class="note-pad white-pad" data-note="F4">
-          <span>F</span>
-          <small>F4</small>
-        </button>
-
-        <button class="note-pad black-pad" data-note="F#4">
-          <span>F#</span>
-          <small>F#4</small>
-        </button>
-
-        <button class="note-pad white-pad" data-note="G4">
-          <span>G</span>
-          <small>G4</small>
-        </button>
-
-        <button class="note-pad black-pad" data-note="G#4">
-          <span>G#</span>
-          <small>G#4</small>
-        </button>
-
-        <button class="note-pad white-pad" data-note="A4">
-          <span>A</span>
-          <small>A4</small>
-        </button>
-
-        <button class="note-pad black-pad" data-note="A#4">
-          <span>A#</span>
-          <small>A#4</small>
-        </button>
-
-        <button class="note-pad white-pad" data-note="B4">
-          <span>B</span>
-          <small>B4</small>
-        </button>
-
-        <button
-          class="note-pad white-pad accent-pad"
-          data-note="C5">
-
-          <span>C</span>
-          <small>C5</small>
-
-        </button>
-
-      </div>
-
+      <div class="synth-pads"> <button class="note-pad white-pad" data-note="C4"> <span>C</span> <small>C4</small>
+        </button> <button class="note-pad black-pad" data-note="C#4"> <span>C#</span> <small>C#4</small> </button>
+        <button class="note-pad white-pad" data-note="D4"> <span>D</span> <small>D4</small> </button> <button
+          class="note-pad black-pad" data-note="D#4"> <span>D#</span> <small>D#4</small> </button> <button
+          class="note-pad white-pad" data-note="E4"> <span>E</span> <small>E4</small> </button> <button
+          class="note-pad white-pad" data-note="F4"> <span>F</span> <small>F4</small> </button> <button
+          class="note-pad black-pad" data-note="F#4"> <span>F#</span> <small>F#4</small> </button> <button
+          class="note-pad white-pad" data-note="G4"> <span>G</span> <small>G4</small> </button> <button
+          class="note-pad black-pad" data-note="G#4"> <span>G#</span> <small>G#4</small> </button> <button
+          class="note-pad white-pad" data-note="A4"> <span>A</span> <small>A4</small> </button> <button
+          class="note-pad black-pad" data-note="A#4"> <span>A#</span> <small>A#4</small> </button> <button
+          class="note-pad white-pad" data-note="B4"> <span>B</span> <small>B4</small> </button> <button
+          class="note-pad white-pad accent-pad" data-note="C5"> <span>C</span> <small>C5</small> </button> </div>
     </section>
-
   </main>
-
   <script src="libs/socket.io.min.js"></script>
   <script src="libs/arduino.js"></script>
   <script src="app.js"></script>
-
 </body>
 
 </html>

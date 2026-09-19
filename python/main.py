@@ -1,435 +1,139 @@
-from arduino.app_bricks.sound_generator import (
-    SoundGenerator,
-    SoundEffect,
-)
+import threading
+from typing import Any
 
+from arduino.app_bricks.sound_generator import SoundGenerator, SoundEffect
 from arduino.app_bricks.web_ui import WebUI
-
 from arduino.app_utils import *
 
 ui = WebUI()
 
-bpmValue = 100
+FX = {
+    "adsr": SoundEffect.adsr,
+    "chorus": SoundEffect.chorus,
+    "tremolo": SoundEffect.tremolo,
+    "vibrato": SoundEffect.vibrato,
+    "overdrive": SoundEffect.overdrive,
+    "bitcrusher": SoundEffect.bitcrusher,
+}
 
-timesignatureValue = (4, 4)
+# Parameters driven by the blue pot: (min, max)
+RANGES = {
+    "bpm": (40, 240),
+    "octave": (1, 8),
+    "attack": (0.01, 2.0),
+}
 
-octavesValue = 8
+# Values a client is allowed to set via "set"
+VALID: dict[str, set[str]] = {
+    "waveform": {"sine", "square", "triangle", "sawtooth"},
+    "sound_effect": set(FX),
+    "time_signature": {"4,4", "3,4", "2,4", "6,8"},
+    "blue": set(RANGES),
+}
 
-waveformValue = "sine"
+DEADBAND = 4  # raw ADC counts; suppresses pot jitter at rounding boundaries
+VOLUME = 1.0
 
-volumeValue = 1.0
+lock = threading.Lock()
+last_raw = -1
 
-attackValue = 0.01
+state: dict[str, Any] = {
+    "bpm": 100,
+    "octave": 8,
+    "attack": 0.01,  # TODO: not applied to the generator yet
+    "waveform": "sine",
+    "sound_effect": "adsr",
+    "time_signature": "4,4",
+    "blue": "bpm",  # which parameter the blue pot controls
+}
 
-releaseValue = 0.03
 
-glideValue = 0.02
-
-selectedEffect = "none"
-
-connected = False
-
-def build_effects():
-
-    effects = []
-
-    effects.append(
-        SoundEffect.adsr(
-            attack=attackValue,
-            release=releaseValue,
-        )
+def build() -> SoundGenerator:
+    """Build a generator from `state`. Call with `lock` held."""
+    num, den = map(int, state["time_signature"].split(","))
+    fx = FX.get(state["sound_effect"])
+    return SoundGenerator(
+        bpm=state["bpm"],
+        time_signature=(num, den),
+        octaves=state["octave"],
+        wave_form=state["waveform"],
+        master_volume=VOLUME,
+        sound_effects=[fx()] if fx else [],
     )
 
-    if selectedEffect == "chorus":
 
-        effects.append(
-            SoundEffect.chorus()
-        )
+player = build()
 
 
-    elif selectedEffect == "tremolo":
+def broadcast_state(snapshot: dict[str, Any]) -> None:
+    ui.send_message("state", snapshot)
 
-        effects.append(
-            SoundEffect.tremolo()
-        )
+def receive_potValues(potRed_value, potBlue_value):
+    global player, last_raw
 
+    raw = min(1023, max(0, int(potBlue_value)))
+    if abs(raw - last_raw) < DEADBAND and raw not in (0, 1023):
+        return True
+    last_raw = raw
 
-    elif selectedEffect == "vibrato":
+    with lock:
+        key = state["blue"]
+        lo, hi = RANGES[key]
+        v = lo + raw * (hi - lo) / 1023
+        v = round(v, 2) if key == "attack" else round(v)
 
-        effects.append(
-            SoundEffect.vibrato()
-        )
+        if v == state[key]:
+            return True
 
+        state[key] = v
+        player = build()
+        snapshot = dict(state)
 
-    elif selectedEffect == "overdrive":
-
-        effects.append(
-            SoundEffect.overdrive()
-        )
-
-
-    elif selectedEffect == "bitcrusher":
-
-        effects.append(
-            SoundEffect.bitcrusher()
-        )
-
-
-    return effects
-
-soundeffectValue = build_effects()
-
-
-player = SoundGenerator(
-
-    bpm=bpmValue,
-
-    time_signature=timesignatureValue,
-
-    octaves=octavesValue,
-
-    wave_form=waveformValue,
-
-    master_volume=volumeValue,
-
-    sound_effects=soundeffectValue,
-)
-
-
-# ==========================================
-# POTENTIOMETERS FROM STM32
-# ==========================================
-
-def receive_potValues(
-    potRed_value,
-    potBlue_value
-):
-
-    ui.send_message(
-        "message",
-        {
-            "potBlue": potBlue_value,
-            "potRed": potRed_value,
-        }
-    )
-
+    broadcast_state(snapshot)
     return True
 
 
-Bridge.provide(
-    "receive_potValues",
-    receive_potValues
-)
+Bridge.provide("receive_potValues", receive_potValues)
 
 
 def on_connect(connection):
-
-    global connected
-
-    connected = True
-
-    print(
-        "WebUI connected"
-    )
+    print("WebUI connected")
+    with lock:
+        snapshot = dict(state)
+    broadcast_state(snapshot)  # sync a fresh page to the real state
 
 
 def on_disconnect(connection):
-
-    global connected
-
-    connected = False
-
-    print(
-        "WebUI disconnected"
-    )
+    print("WebUI disconnected")
 
 
-def wss_send_note(
-    client,
-    data
-):
-
-    note = data.get("note")
-
-
-    if not note:
-
-        print(
-            "Invalid note received"
-        )
-
-        return
-
-
-    print(
-        f"Playing: {note}"
-    )
-
-
-    player.play(
-        note,
-        1 / 4
-    )
-
-def wss_send_settings(
-    client,
-    data
-):
-
+def wss_set(client, data):
+    """Client delta: {"key": "waveform", "value": "triangle"}"""
     global player
 
-    global waveformValue
-    global timesignatureValue
-    global bpmValue
-    global octavesValue
+    key, val = data.get("key"), data.get("value")
+    if key not in VALID or val not in VALID[key]:
+        return  # unknown key, or pot-owned param, or bad value
 
-    global volumeValue
-    global attackValue
-    global releaseValue
-    global glideValue
+    with lock:
+        state[key] = val
+        if key != "blue":  # blue only changes what the pot controls
+            player = build()
+        snapshot = dict(state)
 
-    global selectedEffect
-    global soundeffectValue
-
-    waveformValue = str(
-        data.get(
-            "waveform",
-            waveformValue
-        )
-    )
-
-    bpmValue = int(
-        data.get(
-            "bpm",
-            bpmValue
-        )
-    )
-
-    bpmValue = max(
-        40,
-        min(
-            240,
-            bpmValue
-        )
-    )
+    print(f"set {key}={val}")
+    broadcast_state(snapshot)
 
 
-    octavesValue = int(
-        data.get(
-            "octave",
-            octavesValue
-        )
-    )
+def wss_send_note(client, data):
+    p = player  # snapshot the reference; a concurrent swap can't affect this note
+    note = data["note"]
+    print(f"Playing: {note}")
+    p.play(note, 1 / 4)
 
-
-    octavesValue = max(
-        1,
-        min(
-            8,
-            octavesValue
-        )
-    )
-
-    attackValue = float(
-        data.get(
-            "attack",
-            attackValue
-        )
-    )
-
-
-    attackValue = max(
-        0.01,
-        min(
-            2.0,
-            attackValue
-        )
-    )
-
-    volumeValue = float(
-        data.get(
-            "volume",
-            volumeValue
-        )
-    )
-
-
-    volumeValue = max(
-        0.0,
-        min(
-            1.0,
-            volumeValue
-        )
-    )
-
-
-    releaseValue = float(
-        data.get(
-            "release",
-            releaseValue
-        )
-    )
-
-
-    releaseValue = max(
-        0.01,
-        min(
-            2.0,
-            releaseValue
-        )
-    )
-
-    glideValue = float(
-        data.get(
-            "glide",
-            glideValue
-        )
-    )
-
-
-    glideValue = max(
-        0.0,
-        min(
-            1.0,
-            glideValue
-        )
-    )
-
-
-    selectedEffect = str(
-        data.get(
-            "sound_effect",
-            selectedEffect
-        )
-    )
-
-    timeSignatureString = str(
-        data.get(
-            "time_signature",
-            "4,4"
-        )
-    )
-
-
-    try:
-
-        numerator, denominator = (
-            timeSignatureString.split(",")
-        )
-
-        timesignatureValue = (
-            int(numerator),
-            int(denominator)
-        )
-
-
-    except (ValueError, TypeError):
-
-        print(
-            "Invalid time signature:",
-            timeSignatureString
-        )
-
-        timesignatureValue = (
-            4,
-            4
-        )
-
-
-    soundeffectValue = (
-        build_effects()
-    )
-
-    player = SoundGenerator(
-
-        bpm=bpmValue,
-
-        time_signature=
-            timesignatureValue,
-
-        octaves=
-            octavesValue,
-
-        wave_form=
-            waveformValue,
-
-        master_volume=
-            volumeValue,
-
-        sound_effects=
-            soundeffectValue,
-    )
-
-    print(
-        "------------------------------"
-    )
-
-    print(
-        "Waveform:",
-        waveformValue
-    )
-
-    print(
-        "Effect:",
-        selectedEffect
-    )
-
-    print(
-        "Time Signature:",
-        timesignatureValue
-    )
-
-    print(
-        "BPM:",
-        bpmValue
-    )
-
-    print(
-        "Octave:",
-        octavesValue
-    )
-
-    print(
-        "Volume:",
-        volumeValue
-    )
-
-    print(
-        "Attack:",
-        attackValue
-    )
-
-    print(
-        "Release:",
-        releaseValue
-    )
-
-    print(
-        "Glide:",
-        glideValue,
-        "(stored, not applied)"
-    )
-
-    print(
-        "------------------------------"
-    )
-
-ui.on_connect(
-    on_connect
-)
-
-ui.on_disconnect(
-    on_disconnect
-)
-
-ui.on_message(
-    "send_note",
-    wss_send_note
-)
-
-ui.on_message(
-    "send_settings",
-    wss_send_settings
-)
+ui.on_connect(on_connect)
+ui.on_disconnect(on_disconnect)
+ui.on_message("set", wss_set)
+ui.on_message("send_note", wss_send_note)
 
 App.run()
