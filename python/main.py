@@ -20,7 +20,7 @@ FX = {
 RANGES = {
     "bpm": (40, 240),
     "octave": (1, 8),
-    "attack": (0.01, 2.0),
+    "volume": (0.0, 1.0),
 }
 
 # Values a client is allowed to set via "set"
@@ -32,7 +32,6 @@ VALID: dict[str, set[str]] = {
 }
 
 DEADBAND = 4  # raw ADC counts; suppresses pot jitter at rounding boundaries
-VOLUME = 1.0
 
 lock = threading.Lock()
 last_raw = -1
@@ -40,7 +39,7 @@ last_raw = -1
 state: dict[str, Any] = {
     "bpm": 100,
     "octave": 8,
-    "attack": 0.01,  # TODO: not applied to the generator yet
+    "volume": 1.0,  # TODO: not applied to the generator yet
     "waveform": "sine",
     "sound_effect": "adsr",
     "time_signature": "4,4",
@@ -57,7 +56,7 @@ def build() -> SoundGenerator:
         time_signature=(num, den),
         octaves=state["octave"],
         wave_form=state["waveform"],
-        master_volume=VOLUME,
+        master_volume=state["volume"],
         sound_effects=[fx()] if fx else [],
     )
 
@@ -78,9 +77,10 @@ def receive_potValues(potRed_value, potBlue_value):
 
     with lock:
         key = state["blue"]
+        print("blue key:", repr(key))
         lo, hi = RANGES[key]
         v = lo + raw * (hi - lo) / 1023
-        v = round(v, 2) if key == "attack" else round(v)
+        v = round(v, 2) if key == "volume" else round(v)
 
         if v == state[key]:
             return True

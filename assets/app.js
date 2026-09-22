@@ -8,16 +8,16 @@ const selectedTimeSignature = document.getElementById('time-signature');
 
 const bpmButton = document.getElementById('bpmbutton');
 const octaveButton = document.getElementById('octavebutton');
-const attackButton = document.getElementById('attackbutton');
+const volumeButton = document.getElementById('volumebutton');
 
 const bpmValueDisplay = document.getElementById('bpmvalue');
 const octaveValueDisplay = document.getElementById('octavevalue');
-const attackValueDisplay = document.getElementById('attackvalue');
+const volumeValueDisplay = document.getElementById('volumevalue');
 
 const blueButtons = {
     bpm: bpmButton,
     octave: octaveButton,
-    attack: attackButton,
+    volume: volumeButton,
 };
 
 const set = (key, value) => ui.send_message('set', { key, value });
@@ -32,7 +32,7 @@ function selectBlueParameter(selectedButton) {
 function renderState(s) {
     bpmValueDisplay.textContent = s.bpm;
     octaveValueDisplay.textContent = s.octave;
-    attackValueDisplay.textContent = Number(s.attack).toFixed(2);
+    volumeValueDisplay.textContent = Number(s.volume).toFixed(2);
 
     selectedWaveform.value = s.waveform;
     selectedSoundEffect.value = s.sound_effect;
