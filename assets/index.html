@@ -33,9 +33,11 @@
           </div> <span class="control-tag">CONTROL B</span>
         </div>
         <p class="control-description"> Select which parameter the red potentiometer controls. </p>
-        <div class="parameter-buttons"> <button class="parameter-button active">VOLUME</button> <button
-            class="parameter-button">RELEASE</button> <button class="parameter-button">GLIDE</button> </div>
-        <div class="parameter-value"> <span>Current value</span> <strong id="redPotValue">1.0</strong> </div>
+        <div class="parameter-buttons"> <button class="parameter-button active" id="attackbutton">ATTACK</button> <button
+            class="parameter-button" id="releasebutton">RELEASE</button> <button class="parameter-button" id="glidebutton">GLIDE</button> </div>
+        <div class="parameter-value"> <span>Attack value: </span> <strong id="attackvalue">0.01</strong> <span>Release value:
+          </span> <strong id="releasevalue">0.01</strong> <span>Glide value: </span> <strong id="glidevalue">0.01</strong>
+        </div>
       </div>
       <!-- Wave Pads -->
       <div class="control-card red-control">
@@ -45,13 +47,11 @@
         </div>
           </div>
           <div class="wave-pads">
-            <button
-          class="note-pad black-pad" data-note="G#4"> <span>G#</span> <small>G#4</small> </button>
-        <button
-          class="wave-pad white-pad" data-note="A4"> <span>A</span> <small>A4</small> </button> <button
-          class="wave-pad black-pad" data-note="A#4"> <span>A#</span> <small>A#4</small> </button> <button
-          class="wave-pad white-pad" data-note="B4"> <span>B</span> <small>B4</small> </button> <button
-          class="wave-pad white-pad accent-pad" data-note="C5"> <span>C</span> <small>C5</small> </button>
+            <button class="wave-pad white-pad" data-wave="415"><span>G#</span><small>G#4</small></button>
+            <button class="wave-pad white-pad" data-wave="440"><span>A</span><small>A4</small></button>
+            <button class="wave-pad black-pad" data-wave="466"><span>A#</span><small>A#4</small></button>
+            <button class="wave-pad white-pad" data-wave="493"><span>B</span><small>B4</small></button>
+            <button class="wave-pad white-pad accent-pad" data-wave="523"><span>C</span><small>C5</small></button>
             
           </div>
       

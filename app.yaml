@@ -4,4 +4,5 @@ ports: []
 bricks:
 - arduino:web_ui: {}
 - arduino:sound_generator: {}
+- arduino:wave_generator: {}
 icon: ▶️

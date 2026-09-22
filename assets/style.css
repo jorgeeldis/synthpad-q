@@ -428,6 +428,11 @@ button {
   filter: brightness(1.25);
 }
 
+.wave-pad:active {
+  transform: translateY(3px) scale(0.97);
+  filter: brightness(1.25);
+}
+
 .white-pad {
   background: linear-gradient(#fafafa, #cfd3da);
   color: #15171b;
