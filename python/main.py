@@ -114,9 +114,9 @@ def build_player() -> SoundGenerator:
     effect = FX.get(state["sound_effect"])
 
     return SoundGenerator(
-        bpm=state["bpm"],
+        bpm=int(state["bpm"]),
         time_signature=(numerator, denominator),
-        octaves=state["octave"],
+        octaves=int(state["octave"]),
         wave_form=state["waveform"],
         master_volume=state["volume"],
         sound_effects=[effect()] if effect else [],
@@ -331,7 +331,7 @@ def receive_potValues(potRed_value, potBlue_value):
 
             value = round(
                 lo + raw_blue * (hi - lo) / 1023,
-                DECIMALS[key]
+                DECIMALS[key] or None
             )
 
             if value != state[key]:
@@ -355,7 +355,7 @@ def receive_potValues(potRed_value, potBlue_value):
 
             value = round(
                 lo + raw_red * (hi - lo) / 1023,
-                DECIMALS[key]
+                DECIMALS[key] or None
             )
 
             if value != state[key]:
