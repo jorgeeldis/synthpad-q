@@ -1,8 +1,8 @@
 # SynthPad 1986: Synthesizer Made with Arduino UNO Q
 
-[![SynthPad 1986 demo video](https://img.youtube.com/vi/CJGNXiqGhB0/hqdefault.jpg)](https://www.youtube.com/watch?v=CJGNXiqGhB0)
+[![SynthPad 1986 demo video](https://img.youtube.com/vi/LN-ef_sypu4/hqdefault.jpg)](https://www.youtube.com/watch?v=LN-ef_sypu4)
 
-**Demo video:** [Watch on YouTube](https://www.youtube.com/watch?v=CJGNXiqGhB0)
+**Demo video:** [Watch on YouTube](https://www.youtube.com/watch?v=LN-ef_sypu4)
 
 ## Abstract
 
