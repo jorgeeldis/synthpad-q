@@ -1,8 +1,8 @@
-# SynthPad Q
+# SynthWave Keyboard
 
 A standalone touchscreen synthesizer built on the **Arduino UNO Q** with Arduino App Lab Bricks.
 
-SynthPad Q combines a 7" touchscreen, two physical knobs, a USB speaker and a 3D-printed enclosure into a dedicated instrument that needs no computer to play. The Linux side of the UNO Q runs the Python audio engine and the touchscreen web UI; the microcontroller side reads the knobs.
+SynthWave Keyboard combines a 7" touchscreen, two physical knobs, a USB speaker and a 3D-printed enclosure into a dedicated instrument that needs no computer to play. The Linux side of the UNO Q runs the Python audio engine and the touchscreen web UI; the microcontroller side reads the knobs.
 
 <!-- Add the demo video link and a photo of the finished device here -->
 
