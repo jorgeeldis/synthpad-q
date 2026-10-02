@@ -4,7 +4,9 @@ A standalone touchscreen synthesizer built on the **Arduino UNO Q** with Arduino
 
 SynthWave Keyboard combines a 7" touchscreen, two physical knobs, a USB speaker and a 3D-printed enclosure into a dedicated instrument that needs no computer to play. The Linux side of the UNO Q runs the Python audio engine and the touchscreen web UI; the microcontroller side reads the knobs.
 
-<!-- Add the demo video link and a photo of the finished device here -->
+[![SynthWave Keyboard demo video](https://img.youtube.com/vi/CJGNXiqGhB0/hqdefault.jpg)](https://www.youtube.com/watch?v=CJGNXiqGhB0)
+
+**Demo video:** [Watch on YouTube](https://www.youtube.com/watch?v=CJGNXiqGhB0)
 
 ## Features
 
@@ -78,7 +80,7 @@ synthpad-q/
 
 1. Wire the knobs and connect the touchscreen and USB speaker as described above.
 2. Copy this folder into your apps in Arduino App Lab on the UNO Q.
-3. Open **synthpad-q** in App Lab and run it. App Lab uploads the sketch and starts the Python app.
+3. Open **SynthWave Keyboard** in App Lab and run it. App Lab uploads the sketch and starts the Python app.
 4. Open the app's web UI on the touchscreen and play.
 
 ## Author
